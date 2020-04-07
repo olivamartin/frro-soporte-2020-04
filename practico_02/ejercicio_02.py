@@ -1,13 +1,16 @@
-# Implementar la clase Circulo que contiene un radio, y sus métodos area y perimetro.
+import math
+class Circulo():
 
+ def __init__(self, radio):
+    self.radio = radio
 
-class Circulo:
+ def area(self):
+    area = math.pi * pow(self.radio,2)
+    return area
 
-    def __init__(self, radio):
-        pass
+ def perimetro(self):
+     return 2 * math.pi * self.radio
 
-    def area(self):
-        pass
-
-    def perimetro(self):
-        pass
+cir = Circulo(10)
+print(cir.area())
+print(cir.perimetro())
