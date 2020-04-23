@@ -1,20 +1,19 @@
-# Implementar la funcion borrar_persona, que elimina un registro en la tabla Persona.
-# Devuelve un booleano en base a si encontro el registro y lo borro o no.
-
+from ejercicio_01 import reset_table,cursor,connection,getAll
+from ejercicio_02 import insertPerson
 import datetime
 
-from practico_03.ejercicio_01 import reset_tabla
-from practico_03.ejercicio_02 import agregar_persona
+def deleteOne(personId):
+        sql_delete_query = """DELETE FROM `practico_03`.`person` WHERE (`personId` = %s)"""
+        cursor.execute(sql_delete_query,personId)
+        connection.commit()
+        return False if cursor.rowcount == 0 else True
 
 
-def borrar_persona(id_persona):
-    return False
+@reset_table
+def tests():
+   assert (deleteOne(insertPerson('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)))
+   assert deleteOne(12345) is False
 
-
-@reset_tabla
-def pruebas():
-    assert borrar_persona(agregar_persona('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180))
-    assert borrar_persona(12345) is False
 
 if __name__ == '__main__':
-    pruebas()
+    tests()

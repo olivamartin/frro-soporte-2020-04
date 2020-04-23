@@ -1,22 +1,26 @@
-# Implementar la funcion buscar_persona, que devuelve el registro de una persona basado en su id.
-# El return es una tupla que contiene sus campos: id, nombre, nacimiento, dni y altura.
-# Si no encuentra ningun registro, devuelve False.
+import datetime,pymysql
+from ejercicio_01 import reset_table,connection
+from ejercicio_02 import insertPerson
 
-import datetime
+cursor = connection.cursor(pymysql.cursors.DictCursor)
 
-from practico_03.ejercicio_01 import reset_tabla
-from practico_03.ejercicio_02 import agregar_persona
+def convert(dicc):
+    return (*dicc, )
 
+def getOne(personId):
+ try:
+    sql_getOne_query = """SELECT * FROM `practico_03`.`person` WHERE (`personId` = %s)"""
+    cursor.execute(sql_getOne_query,personId)
+    result = cursor.fetchall()[0]
+    return result
+ except:
+     return False
 
-def buscar_persona(id_persona):
-    return False
-
-
-@reset_tabla
-def pruebas():
-    juan = buscar_persona(agregar_persona('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180))
-    assert juan == (1, 'juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)
-    assert buscar_persona(12345) is False
+@reset_table
+def tests():
+    juan = convert(getOne(insertPerson('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)).values()) #el convert es para convertir el diccionario a tupla
+    assert juan == (1, 'juan perez', datetime.date(1988, 5, 15), 32165498, 180)
+    assert getOne(12345) is False
 
 if __name__ == '__main__':
-    pruebas()
+    tests()

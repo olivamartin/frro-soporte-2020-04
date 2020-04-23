@@ -1,23 +1,28 @@
-# Implementar la funcion actualizar_persona, que actualiza un registro de una persona basado en su id.
-# Devuelve un booleano en base a si encontro el registro y lo actualizo o no.
-
+from ejercicio_01 import reset_table,cursor,connection
+from ejercicio_02 import insertPerson
+from ejercicio_04 import getOne,convert
 import datetime
 
-from practico_03.ejercicio_01 import reset_tabla
-from practico_03.ejercicio_02 import agregar_persona
-from practico_03.ejercicio_04 import buscar_persona
+def updateOne(personId,name,birthDate,dni,height):
+    sql_updateOne_query = """UPDATE `practico_03`.`person` SET `name` = %s,`birthDate` = %s, `dni` = %s, `height` = %s WHERE (`personId` = %s)"""
+    recordTuple = (name, birthDate, dni, height,personId)
+    cursor.execute(sql_updateOne_query,recordTuple)
+    connection.commit()
+    if cursor.rowcount != 0:
+        sql_getOne_query = """SELECT * FROM `practico_03`.`person` WHERE `personId` = %s"""
+        cursor.execute(sql_getOne_query,personId)
+        result = cursor.fetchall()
+        return result[0]
+    else:
+        return False
 
-
-def actualizar_persona(id_persona, nombre, nacimiento, dni, altura):
-    return False
-
-
-@reset_tabla
-def pruebas():
-    id_juan = agregar_persona('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)
-    actualizar_persona(id_juan, 'juan carlos perez', datetime.datetime(1988, 4, 16), 32165497, 181)
-    assert buscar_persona(id_juan) == (1, 'juan carlos perez', datetime.datetime(1988, 4, 16), 32165497, 181)
-    assert actualizar_persona(123, 'nadie', datetime.datetime(1988, 4, 16), 12312312, 181) is False
+@reset_table
+def tests():
+    id_juan = insertPerson('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)
+    updateOne(id_juan, 'juan carlos perez', datetime.datetime(1988, 4, 16), 32165497, 181)
+    assert convert(getOne(id_juan).values()) == (1, 'juan carlos perez', datetime.date(1988, 4, 16), 32165497, 181)
+    assert updateOne(123, 'nadie', datetime.datetime(1988, 4, 16), 12312312, 181) is False
 
 if __name__ == '__main__':
-    pruebas()
+    tests()
+
