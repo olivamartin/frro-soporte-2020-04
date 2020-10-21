@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>MG Clothes Store</title>
+    <style type="text/css">
+    .my-custom-scrollbar {
+        height: 400px !important;
+    }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="height: 10%">
+        <a class="navbar-brand" href="#">MGPrendas Software</a>
+        <div class="collapse navbar-collapse" id="basicExampleNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/sales">Ventas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/suppliers">Proveedores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/statistics">Estadísticas</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid w-75">
+        <form method="POST" action="" class="h-100">
+            {{ form_sales.csrf_token }}
+            <div class="form-row">
+                <div class="form-group col-md-5">
+                    {{ form_sales.product_code.label(class="form-control-label") }}
+                    {% if form_sales.product_code.errors %}
+                    {{ form_sales.product_code(class="form-control form-control-md is-invalid", value='1111') }}
+                    <div class="invalid-feedback">
+                        {% for error in form_sales.product_code.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form_sales.product_code(class="form-control form-control-md", value='1111') }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-1">
+                    {{ form_sales.amount.label(class="form-control-label") }}
+                    {% if form_sales.amount.errors %}
+                    {{ form_sales.amount(class="form-control form-control-md is-invalid", value='1') }}
+                    <div class="invalid-feedback">
+                        {% for error in form_sales.amount.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form_sales.amount(class="form-control form-control-md", value='1') }}
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-4 d-flex align-items-center">
+                    {{ form_sales.submit(class="btn btn-warning") }}
+                </div>
+                <!--FLASH-->
+                <div class="form-group col-md-2">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Description</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in shopping_cart %}
+                        <tr>
+                            <td id='description{{ item.position }}'>{{ item.description }}</td>
+                            <td id='price{{ item.position }}'>{{ item.price }}</td>
+                            <td id='amount{{ item.position }}'>{{ item.amount }}</td>
+                            <td id='subtotal{{ item.position }}'>{{ item.subtotal }}</td>
+                            <td id={{item.position}}>{{ form_sales.delete(class="btn btn-danger btn-sm delete", id=item.position, onclick='httpGet(this.id)') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="row d-flex justify-content-between w-100">
+                <div class="row d-flex w-50">
+                    {{ form_sales.endSale(class="btn btn-lg btn-primary") }}
+                </div>
+                <div class="row d-flex justify-content-center align-items-center w-25">
+                    <p id="total" style="font-size: 1.5rem; margin: 0; padding: 0; font-weight: bold;">Total: {{total}}</p>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+    <script>
+    function httpGet(code) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", "{{ url_for('sales') }}" + "?id=" + code, false); // false for synchronous request
+        xmlHttp.send(null);
+        return xmlHttp.responseText;
+    }
+    </script>
+</body>
+
+</html>

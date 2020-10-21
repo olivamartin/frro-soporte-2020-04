@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>MG Clothes Store</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="height: 10%">
+        <a class="navbar-brand" href="#">MGPrendas Software</a>
+        <div class="collapse navbar-collapse" id="basicExampleNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sales">Ventas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/suppliers">Proveedores</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/statistics">Estadísticas</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid h-auto d-flex justify-content-center flex-column" style="height: 90% !important;">
+        <form method="POST" class="d-flex justify-content-center flex-column">
+            {{ form_statistics.csrf_token }}
+            <div class="row d-flex justify-content-between" style="width: 75%; align-self: center;">
+                {{ form_statistics.initial_date.label(class="w-25 form-control-label") }}
+                {{ form_statistics.end_date.label(class="w-25 form-control-label") }}
+                {{ form_statistics.product_code.label(class="w-25 form-control-label") }}
+            </div>
+            <div class="row d-flex justify-content-between" style="width: 75%; align-self: center;">
+                <div class="row d-flex justify-content-center flex-column">
+                    {% if form_statistics.initial_date.errors %}
+                    {{ form_statistics.initial_date(class="form-control form-control-md w-75 is-invalid", type='date', value='2020-01-01') }}
+                    <div class="invalid-feedback">
+                        {% for error in form_statistics.initial_date.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form_statistics.initial_date(class="form-control form-control-md", type='date', value='2020-01-01') }}
+                    {% endif %}
+                </div>
+                <div class="row d-flex justify-content-center flex-column">
+                    {% if form_statistics.end_date.errors %}
+                    {{ form_statistics.end_date(class="form-control form-control-md w-75 is-invalid", type='date', value='2020-02-01') }}
+                    <div class="invalid-feedback">
+                        {% for error in form_statistics.end_date.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form_statistics.end_date(class="form-control form-control-md", type='date', value='2020-10-11') }}
+                    {% endif %}
+                </div>
+                <div class="row d-flex justify-content-center flex-column">
+                    {% if form_statistics.product_code.errors %}
+                    {{ form_statistics.product_code(class="form-control form-control-md w-75 is-invalid", value="1111") }}
+                    <div class="invalid-feedback">
+                        {% for error in form_statistics.product_code.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form_statistics.product_code(class="form-control form-control-md", value="1111") }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row" style="height: 15%"><p></p></div>
+            
+            <div class="row d-flex justify-content-center">
+                {{ form_statistics.submit1(class="btn btn-primary btn-lg btn-block") }}
+            </div>
+
+            <div class="row" style="height: 15%"><p></p></div>
+
+            <div class="row d-flex justify-content-center">
+                {{ form_statistics.submit2(class="btn btn-default btn-lg btn-block") }}
+            </div>
+
+            <div class="row d-flex justify-content-center">
+                {{ form_statistics.options(class="browser-secondary custom-select w-25") }}
+            </div>
+
+            <div class="row" style="height: 15%"><p></p></div>
+
+            <div class="row d-flex justify-content-center">
+                {{ form_statistics.submit3(class="btn btn-success btn-lg btn-block") }}
+            </div>
+
+            <div class="row" style="height: 15%"><p></p></div>
+
+            <div class="row d-flex justify-content-center">
+                {{ form_statistics.submit4(class="btn btn-warning btn-lg btn-block") }}
+            </div>
+        </form>
+    </div>
+    {% if show_modal %}
+    <div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" show=True>
+        <div class="modal-dialog modal-fluid h-75" role="document">
+            <div class="modal-content h-100 justify-content-center align-items-center">
+                <div class="modal-body">
+                    <img src="{{ url_for('static', filename='/images/plots/' + plot) }}" style="width: 100%; height: 100%;" />
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+    <script type="text/javascript">
+        if ('{{plot }}' != ''){
+            $("#image_modal").modal({ show: true });
+        }
+    </script>
+</body>
+
+</html>

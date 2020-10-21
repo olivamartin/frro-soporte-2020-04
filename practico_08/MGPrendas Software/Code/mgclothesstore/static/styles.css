@@ -1,0 +1,97 @@
+html, body{
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+.sales-col{
+	background-color: #c6e2e9;
+	transition: opacity .25s;
+}
+.sales-col:hover{
+	opacity: .7;
+	cursor: pointer;
+}
+
+.products-col{
+	background-color: #f1ffc4;
+	transition: opacity .25s;
+}
+.products-col:hover{
+	opacity: .7;
+	cursor: pointer;
+}
+
+.suppliers-col{
+	background-color: #ffcaaf;
+	transition: opacity .25s;
+}
+.suppliers-col:hover{
+	opacity: .7;
+	cursor: pointer;
+}
+
+.statistcs-col{
+	background-color: #dab894;
+	transition: opacity .25s;
+}
+.statistcs-col:hover{
+	opacity: .7;
+	cursor: pointer;
+}
+
+.my-custom-scrollbar {
+position: relative;
+height: 450px;
+overflow: auto;
+}
+
+.table-wrapper-scroll-y {
+display: block;
+}
+
+.pt-3-half {
+padding-top: 1.4rem;
+}
+
+table{
+	text-align: center;
+}
+
+img{
+	height: 15%;
+}
+
+nav{
+	background-color: #80B2DF !important;
+} 
+
+.navbar-brand, .nav-link{
+	font-weight: bold;
+}
+
+.add-button{
+	background-color: #CDEAC0;
+	font-weight: bold;
+	font-size: 1rem;
+    color: black;
+}
+
+.update-button{
+	background-color: #EFE9AE;
+	font-weight: bold;
+	font-size: 1rem;
+    color: black;
+}
+
+.delete-button{
+	background-color: #FF928B;
+	font-weight: bold;
+	font-size: 1rem;
+    color: white;
+}
+
+span{
+	width: 75% !important;
+}

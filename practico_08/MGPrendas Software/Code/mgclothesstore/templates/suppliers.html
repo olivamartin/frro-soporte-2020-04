@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>MG Clothes Store</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="height: 10%">
+        <a class="navbar-brand" href="#">MGPrendas Software</a>
+        <div class="collapse navbar-collapse" id="basicExampleNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sales">Ventas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Productos</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/suppliers">Proveedores</a>
+                    <span class="sr-only">(current)</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/statistics">Estadísticas</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid h-auto" style="height: 90% !important;">
+        <div class="container d-flex flex-row justify-content-end">
+            <div class="text-center">
+                <a href="" class="btn add-button btn-rounded" data-toggle="modal" data-target="#addSupplier"><i class="fas fa-plus"></i></a>
+            </div>
+            <div class="text-center">
+                <a href="" class="btn update-button btn-rounded" data-toggle="modal" data-target="#updateSupplier"><i class="fas fa-pencil-alt"></i></a>
+            </div>
+            <div class="text-center">
+                <a href="" class="btn delete-button btn-rounded" data-toggle="modal" data-target="#deleteSupplier"><i class="fas fa-trash-alt"></i></a>
+            </div>
+        </div>
+        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-center">CUIT</th>
+                        <th class="text-center">Proveedor</th>
+                        <th class="text-center">Teléfono</th>
+                    </tr>
+                </thead>
+                 <tbody>
+                    {% for supplier in suppliers %}
+                    <tr>
+                        <td>{{ supplier.cuit }}</td>
+                        <td>{{ supplier.name }}</td>
+                        <td>{{ supplier.phone }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!--ADD MODAL-->
+        <div class="modal fade" id="addSupplier" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body mx-3">
+                        <form method="POST" action="">
+                            {{ form_add.csrf_token }}
+                            <div class="md-form mb-5">
+                                <i class="fas fa-user prefix grey-text"></i>
+                                {{ form_add.cuit.label(class="form-control-label") }}
+                                {% if form_add.cuit.errors %}
+                                {{ form_add.cuit(class="form-control form-control-md is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_add.cuit.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form_add.cuit(class="form-control validate") }}
+                                {% endif %}
+                            </div>
+                            <div class="md-form mb-5">
+                                <i class="fas fa-shipping-fast prefix grey-text"></i>
+                                {{ form_add.name.label(class="form-control-label") }}
+                                {% if form_add.name.errors %}
+                                {{ form_add.name(class="form-control form-control-md is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_add.name.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form_add.name(class="form-control validate") }}
+                                {% endif %}
+                            </div>
+                            <div class="md-form mb-4">
+                                <i class="fas fa-phone prefix grey-text"></i>
+                                {{ form_add.phone.label(class="form-control-label") }}
+                                {% if form_add.phone.errors %}
+                                {{ form_add.phone(class="form-control form-control-md is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_add.phone.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form_add.phone(class="form-control form-control-md") }}
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer d-flex justify-content-center">
+                                {{ form_add.submit_add(class="btn add-button") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--UPDATE MODAL-->
+        <div class="modal fade" id="updateSupplier" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body mx-3">
+                        <form method="POST" action="">
+                            {{ form_update.csrf_token }}
+                            <div class="md-form mb-5">
+                                <i class="fas fa-user prefix grey-text"></i>
+                                {{ form_update.cuit.label(class="form-control-label") }}
+                                {% if form_update.cuit.errors %}
+                                {{ form_update.cuit(class="form-control form-control-md is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_update.cuit.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form_update.cuit(class="form-control validate") }}
+                                {% endif %}
+                            </div>
+                            <div class="md-form mb-5">
+                                <i class="fas fa-shipping-fast prefix grey-text"></i>
+                                {{ form_update.name.label(class="form-control-label") }}
+                                {% if form_update.name.errors %}
+                                {{ form_update.name(class="form-control form-control-md is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_update.name.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form_update.name(class="form-control validate") }}
+                                {% endif %}
+                            </div>
+                            <div class="md-form mb-4">
+                                <i class="fas fa-phone prefix grey-text"></i>
+                                {{ form_update.phone.label(class="form-control-label") }}
+                                {% if form_update.phone.errors %}
+                                {{ form_update.phone(class="form-control form-control-md is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_update.phone.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form_update.phone(class="form-control form-control-md") }}
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer d-flex justify-content-center">
+                                {{ form_update.submit_update(class="btn update-button") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--DELETE MODAL-->
+        <div class="modal fade" id="deleteSupplier" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body mx-3">
+                        <form method="POST" action="">
+                            {{ form_delete.csrf_token }}
+                            <div class="md-form mb-5">
+                                <i class="fas fa-user prefix grey-text"></i>
+                                {{ form_delete.cuit.label(class="form-control-label") }}
+                                {% if form_delete.cuit.errors %}
+                                {{ form_delete.cuit(class="form-control form-control-md is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form_delete.cuit.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form_delete.cuit(class="form-control validate") }}
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer d-flex justify-content-center">
+                                {{ form_delete.submit_delete(class="btn delete-button") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--FLASH-->
+        <div class="form-group col-md-7">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+</body>
+
+</html>

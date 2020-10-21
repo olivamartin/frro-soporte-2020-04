@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <!-- Datatables -->
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>MG Clothes Store</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="height: 10%">
+        <a class="navbar-brand" href="#">MGPrendas Software</a>
+        <div class="collapse navbar-collapse" id="basicExampleNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sales">Ventas</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/products">Productos</a>
+                    <span class="sr-only">(current)</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/suppliers">Proveedores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/statistics">Estadísticas</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid h-auto" style="height: 90% !important;">
+        <div class="container-fluid h-auto" style="height: 90% !important;">
+            <div class="container d-flex flex-row justify-content-end">
+                <div class="row w-25 d-flex justify-content-center">
+                    <!--FLASH-->
+                    <div class="form-group">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+                <div class="row w-75 d-flex justify-content-end">
+                    <div class="text-center">
+                        <a href="" class="btn add-button btn-rounded" data-toggle="modal" data-target="#addProduct"><i class="fas fa-plus"></i></a>
+                    </div>
+                    <div class="text-center">
+                        <a href="" class="btn update-button btn-rounded" data-toggle="modal" data-target="#updateProduct"><i class="fas fa-pencil-alt"></i></a>
+                    </div>
+                    <div class="text-center">
+                        <a href="" class="btn delete-button btn-rounded" data-toggle="modal" data-target="#deleteProduct"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-striped" id="myTable">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Código</th>
+                            <th class="text-center">Descripción</th>
+                            <th class="text-center">Proveedor</th>
+                            <th class="text-center">Tipo de prenda</th>
+                            <th class="text-center">Talle</th>
+                            <th class="text-center">Color</th>
+                            <th class="text-center">Sexo</th>
+                            <th class="text-center">Temporada</th>
+                            <th class="text-center">Stock</th>
+                            <th class="text-center">Stock mínimo</th>
+                            <th class="text-center">Precio</th>
+                            <th class="text-center">Costo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        {% for product_price in product_prices %}
+                        {% if product.code == product_price.code %}
+                        <tr>
+                            <td>{{ product.code }}</td>
+                            <td>{{ product.description }}</td>
+                            <td>{{ product.suppliers.name }}</td>
+                            <td>{{ product.item_types.description }}</td>
+                            <td>{{ product.sizes.description }}</td>
+                            <td>{{ product.color }}</td>
+                            <td>{{ product.sexes.description }}</td>
+                            <td>{{ product.seasons.description }}</td>
+                            <td>{{ product.stock }}</td>
+                            <td>{{ product.min_stock }}</td>
+                            {% for product_price in product_prices %}
+                            {% if product.code == product_price.code %}
+                            <td>{{ product_price.price }}</td>
+                            <td>{{ product_price.cost }}</td>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!--ADD MODAL-->
+            <div class="modal fade" id="addProduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-fluid w-75" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body mx-3">
+                            <form method="POST" action="">
+                                {{ form_add.csrf_token }}
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        {{ form_add.code.label(class="form-control-label") }}
+                                        {% if form_add.code.errors %}
+                                        {{ form_add.code(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_add.code.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_add.code(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        {{ form_add.description.label(class="form-control-label") }}
+                                        {% if form_add.description.errors %}
+                                        {{ form_add.description(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_add.description.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_add.description(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        {{ form_add.supplier.label(class="form-control-label") }}
+                                        {% if form_add.supplier.errors %}
+                                        {{ form_add.supplier(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_add.supplier.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_add.supplier(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        {{ form_add.item_type.label(class="form-control-label") }}
+                                        {% if form_add.item_type.errors %}
+                                        {{ form_add.item_type(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_add.item_type.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_add.item_type(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_add.sex.label }}
+                                        {{ form_add.sex(class="form-control") }}
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        {{ form_add.color.label(class="form-control-label") }}
+                                        {% if form_add.color.errors %}
+                                        {{ form_add.color(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_add.color.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_add.color(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_add.season.label }}
+                                        {{ form_add.season(class="form-control") }}
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        {{ form_add.size.label }}
+                                        {{ form_add.size(class="form-control") }}
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        {{ form_add.stock.label(class="form-control-label") }}
+                                        {% if form_add.stock.errors %}
+                                        {{ form_add.stock(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_add.stock.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_add.stock(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_add.min_stock.label(class="form-control-label") }}
+                                        {% if form_add.min_stock.errors %}
+                                        {{ form_add.min_stock(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_add.min_stock.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_add.min_stock(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_add.cost.label(class="form-control-label") }}
+                                        {% if form_add.cost.errors %}
+                                        {{ form_add.cost(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_add.cost.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_add.cost(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_add.price.label(class="form-control-label") }}
+                                        {% if form_add.price.errors %}
+                                        {{ form_add.price(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_add.price.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_add.price(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12 d-flex justify-content-center">
+                                        {{ form_add.submit_add(class="btn add-button") }}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--UPDATE MODAL-->
+            <div class="modal fade" id="updateProduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-fluid w-75" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body mx-3">
+                            <form method="POST" action="">
+                                {{ form_update.csrf_token }}
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        {{ form_update.code.label(class="form-control-label") }}
+                                        {% if form_update.code.errors %}
+                                        {{ form_update.code(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_update.code.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_update.code(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        {{ form_update.description.label(class="form-control-label") }}
+                                        {% if form_update.description.errors %}
+                                        {{ form_update.description(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_update.description.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_update.description(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        {{ form_update.supplier.label(class="form-control-label") }}
+                                        {% if form_update.supplier.errors %}
+                                        {{ form_update.supplier(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_update.supplier.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_update.supplier(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        {{ form_update.item_type.label(class="form-control-label") }}
+                                        {% if form_update.item_type.errors %}
+                                        {{ form_update.item_type(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_update.item_type.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_update.item_type(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_update.sex.label }}
+                                        {{ form_update.sex(class="form-control") }}
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        {{ form_update.color.label(class="form-control-label") }}
+                                        {% if form_update.color.errors %}
+                                        {{ form_update.color(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_update.color.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_update.color(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_update.season.label }}
+                                        {{ form_update.season(class="form-control") }}
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        {{ form_update.size.label }}
+                                        {{ form_update.size(class="form-control") }}
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        {{ form_update.stock.label(class="form-control-label") }}
+                                        {% if form_update.stock.errors %}
+                                        {{ form_update.stock(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_update.stock.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_update.stock(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_update.min_stock.label(class="form-control-label") }}
+                                        {% if form_update.min_stock.errors %}
+                                        {{ form_update.min_stock(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_update.min_stock.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_update.min_stock(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_update.price.label(class="form-control-label") }}
+                                        {% if form_update.price.errors %}
+                                        {{ form_update.price(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_update.price.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_update.price(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        {{ form_update.cost.label(class="form-control-label") }}
+                                        {% if form_update.cost.errors %}
+                                        {{ form_update.cost(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form_update.cost.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form_update.cost(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12 d-flex justify-content-center">
+                                        {{ form_update.submit_update(class="btn update-button") }}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--DELETE MODAL-->
+            <div class="modal fade" id="deleteProduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body mx-3">
+                            <form method="POST" action="">
+                                {{ form_delete.csrf_token }}
+                                <div class="form-group">
+                                    {{ form_delete.code.label(class="form-control-label") }}
+                                    {% if form_delete.code.errors %}
+                                    {{ form_delete.code(class="form-control form-control-md is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form_delete.code.errors %}
+                                        <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    {{ form_delete.code(class="form-control form-control-md") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-row">
+                                    {{ form_delete.submit_delete(class="btn delete-button") }}
+                                </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+    <!-- Datatables -->
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#myTable').DataTable();
+        $('.dataTables_length').addClass('bs-select');
+    });
+    </script>
+</body>
+
+</html>

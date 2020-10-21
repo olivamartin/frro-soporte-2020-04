@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>MG Clothes Store</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="height: 10%">
+        <a class="navbar-brand" href="#">MGPrendas Software</a>
+        <div class="collapse navbar-collapse" id="basicExampleNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sales">Ventas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/suppliers">Proveedores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/statistics">Estadísticas</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid h-auto" style="height: 90% !important;">
+        <div class="row h-100">
+            <div class="col-sm d-flex justify-content-center align-items-center sales-col">
+                <a class="h-100 w-100 d-flex justify-content-center align-items-center" href="/sales">
+                    <img src="{{url_for('static', filename='images/sales.png')}}">
+                </a>
+            </div>
+            <div class="col-sm d-flex justify-content-center align-items-center products-col">
+                <a class="h-100 w-100 d-flex justify-content-center align-items-center" href="/products">
+                    <img src="{{url_for('static', filename='images/products.png')}}">
+                </a>
+            </div>
+            <div class="col-sm d-flex justify-content-center align-items-center suppliers-col">
+                <a class="h-100 w-100 d-flex justify-content-center align-items-center" href="/suppliers">
+                    <img src="{{url_for('static', filename='images/suppliers.png')}}">
+                </a>
+            </div>
+            <div class="col-sm d-flex justify-content-center align-items-center statistcs-col">
+                <a class="h-100 w-100 d-flex justify-content-center align-items-center" href="/statistics">
+                    <img src="{{url_for('static', filename='images/statistics.png')}}">
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}">
+    < /body>
+
+    <
+    /html>
