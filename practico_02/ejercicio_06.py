@@ -1,14 +1,15 @@
-# Implementar la clase Persona con un constructor donde reciba una fecha de nacimiento.
-# La clase además debe contener un método edad, que no recibe nada y devuelva la edad de la
-# persona (entero).
-# Para obtener la fecha actual, usar el método de clase "now" de la clase datetime (ya importada).
+from datetime import *
+class Persona():
 
-
-class Persona:
-
-    # nacimiento es un objeto datetime.datetime
     def __init__(self, nacimiento):
-        pass
+        self.nacimiento = nacimiento
+
 
     def edad(self):
-        pass
+        if datetime.now().day < self.nacimiento.day and datetime.now().month < self.nacimiento.month:
+            return datetime.now().year - self.nacimiento.year
+
+        return datetime.now().year - self.nacimiento.year - 1
+
+p = Persona(datetime(1997, 12, 28))
+print(p.edad())
