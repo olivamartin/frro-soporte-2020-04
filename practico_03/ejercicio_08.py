@@ -1,43 +1,38 @@
-# Implementar la funcion listar_pesos, que devuelva el historial de pesos para una persona dada.
-# Debe validar:
-# - que el ID de la persona ingresada existe (reutilizando las funciones ya implementadas).
-
-# Debe devolver:
-# - Lista de (fecha, peso), donde fecha esta representado por el siguiente formato: AAAA-MM-DD.
-#   Ejemplo:
-#   [
-#       ('2018-01-01', 80),
-#       ('2018-02-01', 85),
-#       ('2018-03-01', 87),
-#       ('2018-04-01', 84),
-#       ('2018-05-01', 82),
-#   ]
-# - False en caso de no cumplir con alguna validacion.
-
+from ejercicio_02 import insertPerson
+from ejercicio_04 import getOne
+from ejercicio_06 import reset_table, cursor
+from ejercicio_07 import addWeight
 import datetime
 
-from practico_03.ejercicio_02 import agregar_persona
-from practico_03.ejercicio_06 import reset_tabla
-from practico_03.ejercicio_07 import agregar_peso
+def show_weights(personId):
+    person = getOne(personId)
+    if person:
+        if person["personId"] == personId:
+            sql_getAll_query = """SELECT date,weight FROM practico_03.person_weight WHERE (`personId` = %s)  """
+            cursor.execute(sql_getAll_query,personId)
+            result = cursor.fetchall()
+            weights = []
+            if cursor.rowcount != 0:
+                for row in result:
+                    mytuple = (row["date"].strftime("%Y-%m-%d"),row["weight"])
+                    weights.append(mytuple)
+            return weights
+    else:
+        return False
 
-
-def listar_pesos(id_persona):
-    return []
-
-
-@reset_tabla
+@reset_table
 def pruebas():
-    id_juan = agregar_persona('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)
-    agregar_peso(id_juan, datetime.datetime(2018, 5, 1), 80)
-    agregar_peso(id_juan, datetime.datetime(2018, 6, 1), 85)
-    pesos_juan = listar_pesos(id_juan)
+    id_juan = insertPerson('juan perez', datetime.date(1988, 5, 15), 32165498, 180)
+    addWeight(id_juan, datetime.date(2018, 5, 1), 80)
+    addWeight(id_juan, datetime.date(2018, 6, 1), 85)
+    pesos_juan = show_weights(id_juan)
     pesos_esperados = [
         ('2018-05-01', 80),
         ('2018-06-01', 85),
     ]
     assert pesos_juan == pesos_esperados
     # id incorrecto
-    assert listar_pesos(200) == False
+    assert show_weights(200) == False
 
 
 if __name__ == '__main__':

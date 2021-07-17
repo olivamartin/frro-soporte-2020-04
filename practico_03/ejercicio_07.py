@@ -1,30 +1,44 @@
-# Implementar la funcion agregar_peso, que inserte un registro en la tabla PersonaPeso.
-# Debe validar:
-# - que el ID de la persona ingresada existe (reutilizando las funciones ya implementadas).
-# - que no existe de esa persona un registro de fecha posterior al que queremos ingresar.
-
-# Debe devolver:
-# - ID del peso registrado.
-# - False en caso de no cumplir con alguna validacion.
-
-import datetime
-
-from practico_03.ejercicio_02 import agregar_persona
-from practico_03.ejercicio_06 import reset_tabla
+from ejercicio_01 import connection
+from ejercicio_02 import insertPerson
+from ejercicio_04 import getOne,cursor
+from ejercicio_06 import reset_table
+import datetime,  pymysql
 
 
-def agregar_peso(id_persona, fecha, peso):
-    pass
+def addWeight(personId,date,weight):
+    person = getOne(personId)
+    if person:
+        if person["personId"] == personId:
+            sql_getOne_query = """SELECT personId,MAX(date) maxDate  FROM practico_03.person_weight
+                                    WHERE personId = %s 
+                                    GROUP BY personId;"""
+            cursor.execute(sql_getOne_query, personId)
+            if cursor.rowcount != 0:
+                result = cursor.fetchall()[0]
+                if result["maxDate"] >= date or result["personId"] != personId:
+                    return False
+            sql_insert_query = """INSERT INTO `practico_03`.`person_weight` (personId, date, weight) VALUES (%s,%s,%s)"""
+            recordTuple = (personId, date, weight)
+            cursor.execute(sql_insert_query, recordTuple)
+            connection.commit()
+            sql_getMaxId_query = """SELECT MAX(weightId) maxId FROM practico_03.person_weight"""
+            cursor.execute(sql_getMaxId_query)
+            result2 = cursor.fetchall()[0]['maxId']
+            return result2
+    else:
+        return False
 
 
-@reset_tabla
-def pruebas():
-    id_juan = agregar_persona('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)
-    assert agregar_peso(id_juan, datetime.datetime(2018, 5, 26), 80) > 0
+
+@reset_table
+def tests():
+    id_juan = insertPerson('juan perez', datetime.datetime(1988, 5, 15), 32165498, 180)
+    assert addWeight(id_juan, datetime.datetime(2022, 5, 26), 80) > 0
     # id incorrecto
-    assert agregar_peso(200, datetime.datetime(1988, 5, 15), 80) == False
+    assert addWeight(20, datetime.date(1988, 5, 15), 80) == False
     # registro previo al 2018-05-26
-    assert agregar_peso(id_juan, datetime.datetime(2018, 5, 16), 80) == False
+    assert addWeight(id_juan, datetime.date(2018, 5, 16), 80) == False
 
 if __name__ == '__main__':
-    pruebas()
+   tests()
+
